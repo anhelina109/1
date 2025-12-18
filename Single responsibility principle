@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Принцип єдиної відповідальності (SRP)</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 8px 15px; margin: 10px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 15px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Принцип єдиної відповідальності (SRP)</h1>
+    <p>Клацніть кнопки, щоб побачити різні обробки звіту:</p>
+
+    <button id="generateBtn">Згенерувати звіт</button>
+    <button id="saveBtn">Зберегти у файл (симуляція)</button>
+    <button id="emailBtn">Відправити email (симуляція)</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Клас для генерації звіту (SRP: тільки генерація)
+        class Report {
+            constructor(data) {
+                this.data = data;
+            }
+            generate() {
+                return `Звіт: ${this.data}`;
+            }
+        }
+
+        // Клас для збереження у файл (SRP: тільки збереження)
+        class FileSaver {
+            save(report) {
+                // Симуляція збереження
+                return `Звіт збережено у файл: "${report.generate()}"`;
+            }
+        }
+
+        // Клас для відправки email (SRP: тільки email)
+        class EmailSender {
+            send(report, email) {
+                // Симуляція відправки
+                return `Відправлено на ${email}: "${report.generate()}"`;
+            }
+        }
+
+        const report = new Report("Важливі дані");
+        const fileSaver = new FileSaver();
+        const emailSender = new EmailSender();
+        const result = document.getElementById('result');
+
+        document.getElementById('generateBtn').addEventListener('click', () => {
+            result.textContent = report.generate();
+        });
+
+        document.getElementById('saveBtn').addEventListener('click', () => {
+            result.textContent = fileSaver.save(report);
+        });
+
+        document.getElementById('emailBtn').addEventListener('click', () => {
+            result.textContent = emailSender.send(report, "example@email.com");
+        });
+    </script>
+</body>
+</html>
