@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Фасад</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; background-color: #f0f0f0; }
+        button { padding: 10px 15px; margin: 10px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Фасад</h1>
+    <p>Натисніть кнопку, щоб використати фасад і виконати комплекс дій.</p>
+
+    <button id="runBtn">Виконати фасад</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <pre id="result"></pre>
+    </div>
+
+    <script>
+        // Підсистема 1
+        class SubsystemA {
+            operationA() { return 'Підсистема A: дія виконана'; }
+        }
+
+        // Підсистема 2
+        class SubsystemB {
+            operationB() { return 'Підсистема B: дія виконана'; }
+        }
+
+        // Підсистема 3
+        class SubsystemC {
+            operationC() { return 'Підсистема C: дія виконана'; }
+        }
+
+        // Фасад
+        class Facade {
+            constructor() {
+                this.subA = new SubsystemA();
+                this.subB = new SubsystemB();
+                this.subC = new SubsystemC();
+            }
+            execute() {
+                let result = [];
+                result.push(this.subA.operationA());
+                result.push(this.subB.operationB());
+                result.push(this.subC.operationC());
+                return result.join('\n');
+            }
+        }
+
+        const runBtn = document.getElementById('runBtn');
+        const result = document.getElementById('result');
+
+        runBtn.addEventListener('click', () => {
+            const facade = new Facade();
+            result.textContent = facade.execute();
+        });
+    </script>
+</body>
+</html>
