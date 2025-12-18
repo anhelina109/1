@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Ланцюжок обов’язків</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        input, button { padding: 5px 10px; margin: 5px; font-size: 14px; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Ланцюжок обов’язків</h1>
+    <p>Введіть число, щоб побачити, який об’єкт його обробить.</p>
+
+    <input type="number" id="inputNumber" placeholder="Введіть число">
+    <button id="processBtn">Обробити</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        class Handler {
+            setNext(handler) {
+                this.nextHandler = handler;
+                return handler;
+            }
+            handle(request) {
+                if (this.nextHandler) {
+                    return this.nextHandler.handle(request);
+                } else {
+                    return "Ніхто не обробив запит";
+                }
+            }
+        }
+
+        class SmallNumberHandler extends Handler {
+            handle(request) {
+                if (request < 10) {
+                    return `SmallNumberHandler обробив число ${request}`;
+                }
+                return super.handle(request);
+            }
+        }
+
+        class MediumNumberHandler extends Handler {
+            handle(request) {
+                if (request >= 10 && request < 100) {
+                    return `MediumNumberHandler обробив число ${request}`;
+                }
+                return super.handle(request);
+            }
+        }
+
+        class LargeNumberHandler extends Handler {
+            handle(request) {
+                if (request >= 100) {
+                    return `LargeNumberHandler обробив число ${request}`;
+                }
+                return super.handle(request);
+            }
+        }
+
+        // Створюємо ланцюжок
+        const smallHandler = new SmallNumberHandler();
+        const mediumHandler = new MediumNumberHandler();
+        const largeHandler = new LargeNumberHandler();
+        smallHandler.setNext(mediumHandler).setNext(largeHandler);
+
+        const inputNumber = document.getElementById('inputNumber');
+        const processBtn = document.getElementById('processBtn');
+        const result = document.getElementById('result');
+
+        processBtn.addEventListener('click', () => {
+            const number = Number(inputNumber.value);
+            if (isNaN(number)) {
+                result.textContent = "Будь ласка, введіть число!";
+            } else {
+                result.textContent = smallHandler.handle(number);
+            }
+        });
+    </script>
+</body>
+</html>
