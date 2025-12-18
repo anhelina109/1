@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Посередник</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 5px 10px; margin: 5px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Посередник (Mediator)</h1>
+    <p>Натискайте кнопки, а Mediator координує їхню взаємодію.</p>
+
+    <button id="btnA">Кнопка A</button>
+    <button id="btnB">Кнопка B</button>
+    <button id="btnC">Кнопка C</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Посередник
+        class Mediator {
+            constructor() { this.components = {}; }
+            register(name, component) { this.components[name] = component; }
+            notify(sender, event) {
+                if (event === 'click') {
+                    if (sender === this.components['A']) {
+                        this.components['B'].disable();
+                        this.components['C'].enable();
+                        return "A натиснута: B вимкнено, C ввімкнено";
+                    }
+                    if (sender === this.components['B']) {
+                        this.components['A'].disable();
+                        this.components['C'].enable();
+                        return "B натиснута: A вимкнено, C ввімкнено";
+                    }
+                    if (sender === this.components['C']) {
+                        this.components['A'].enable();
+                        this.components['B'].enable();
+                        return "C натиснута: A і B ввімкнено";
+                    }
+                }
+            }
+        }
+
+        // Компонент
+        class Component {
+            constructor(name, mediator, button) {
+                this.name = name;
+                this.mediator = mediator;
+                this.button = button;
+                mediator.register(name, this);
+                button.addEventListener('click', () => {
+                    const message = mediator.notify(this, 'click');
+                    document.getElementById('result').textContent = message;
+                });
+            }
+            disable() { this.button.disabled = true; }
+            enable() { this.button.disabled = false; }
+        }
+
+        const mediator = new Mediator();
+
+        const btnA = document.getElementById('btnA');
+        const btnB = document.getElementById('btnB');
+        const btnC = document.getElementById('btnC');
+
+        const componentA = new Component('A', mediator, btnA);
+        const componentB = new Component('B', mediator, btnB);
+        const componentC = new Component('C', mediator, btnC);
+    </script>
+</body>
+</html>
