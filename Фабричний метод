@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Фабричний метод — приклад (JS)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f7f7f7;
+    }
+    h1 {
+      color: #333;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+    .log {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ccc;
+      min-height: 80px;
+      white-space: pre-line;
+    }
+    code {
+      background: #eee;
+      padding: 2px 4px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Патерн «Фабричний метод» — простий приклад</h1>
+
+<p>
+Цей приклад створює повідомлення різних типів за допомогою фабричного методу.
+Замість створення обʼєктів напряму використовується клас <code>MessageFactory</code>.
+</p>
+
+<button onclick="create('email')">Створити Email</button>
+<button onclick="create('sms')">Створити SMS</button>
+<button onclick="create('push')">Створити Push</button>
+<button onclick="clearLog()">Очистити</button>
+
+<div class="log" id="log">Інтерактивний лог:</div>
+
+<script>
+  // Продукти
+  class EmailMessage {
+    constructor(text) {
+      this.text = text;
+    }
+    send() {
+      return "📧 Email: " + this.text;
+    }
+  }
+
+  class SMSMessage {
+    constructor(text) {
+      this.text = text;
+    }
+    send() {
+      return "📱 SMS: " + this.text;
+    }
+  }
+
+  class PushMessage {
+    constructor(text) {
+      this.text = text;
+    }
+    send() {
+      return "🔔 Push: " + this.text;
+    }
+  }
+
+  // Фабричний метод
+  class MessageFactory {
+    static createMessage(type, text) {
+      switch (type) {
+        case "email":
+          return new EmailMessage(text);
+        case "sms":
+          return new SMSMessage(text);
+        case "push":
+          return new PushMessage(text);
+        default:
+          throw new Error("Невідомий тип повідомлення");
+      }
+    }
+  }
+
+  // Використання фабрики
+  function create(type) {
+    const message = MessageFactory.createMessage(
+      type,
+      "Вітаємо! Це приклад фабричного методу."
+    );
+    document.getElementById("log").innerText += "\n" + message.send();
+  }
+
+  function clearLog() {
+    document.getElementById("log").innerText = "Інтерактивний лог:";
+  }
+</script>
+
+</body>
+</html>
+ 
