@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Адаптер</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f0f0f0; text-align: center; }
+        input, button { padding: 5px; margin: 5px; font-size: 14px; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Адаптер</h1>
+    <p>Введіть дані у старому форматі, натисніть "Конвертувати", щоб отримати новий формат.</p>
+    
+    <input type="text" id="inputData" placeholder="Старий формат (наприклад: John,25)">
+    <button id="convertBtn">Конвертувати</button>
+    
+    <div id="output">
+        <h3>Новий формат:</h3>
+        <pre id="result"></pre>
+    </div>
+
+    <script>
+        const inputData = document.getElementById('inputData');
+        const convertBtn = document.getElementById('convertBtn');
+        const result = document.getElementById('result');
+
+        convertBtn.addEventListener('click', () => {
+            const oldData = inputData.value.trim();
+            if (!oldData) {
+                result.textContent = 'Будь ласка, введіть дані.';
+                return;
+            }
+            // Адаптер: конвертує "Імʼя,Вік" → {name: Імʼя, age: Вік}
+            const parts = oldData.split(',');
+            if (parts.length !== 2) {
+                result.textContent = 'Неправильний формат! Використайте "Імʼя,Вік"';
+                return;
+            }
+            const adapted = {
+                name: parts[0].trim(),
+                age: Number(parts[1].trim())
+            };
+            result.textContent = JSON.stringify(adapted, null, 2);
+        });
+    </script>
+</body>
+</html>
