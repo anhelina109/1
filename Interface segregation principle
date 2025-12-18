@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Принцип розділення інтерфейсу (ISP)</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 8px 15px; margin: 10px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 15px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Принцип розділення інтерфейсу (ISP)</h1>
+    <p>Обирайте об’єкт і виконуйте методи, які йому потрібні:</p>
+
+    <button id="humanWorkBtn">Людина працює</button>
+    <button id="humanEatBtn">Людина їсть</button>
+    <button id="robotWorkBtn">Робот працює</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Інтерфейси
+        class Workable {
+            work() { throw "Method not implemented"; }
+        }
+
+        class Eatable {
+            eat() { throw "Method not implemented"; }
+        }
+
+        // Реалізації
+        class Human extends Workable {
+            work() { return "Людина працює"; }
+            eat() { return "Людина їсть"; }
+        }
+
+        class Robot extends Workable {
+            work() { return "Робот працює"; }
+        }
+
+        const result = document.getElementById('result');
+        const human = new Human();
+        const robot = new Robot();
+
+        document.getElementById('humanWorkBtn').addEventListener('click', () => {
+            result.textContent = human.work();
+        });
+
+        document.getElementById('humanEatBtn').addEventListener('click', () => {
+            result.textContent = human.eat();
+        });
+
+        document.getElementById('robotWorkBtn').addEventListener('click', () => {
+            result.textContent = robot.work();
+        });
+    </script>
+</body>
+</html>
