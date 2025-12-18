@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Відвідувач</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 5px 10px; margin: 5px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Відвідувач (Visitor)</h1>
+    <p>Виберіть операцію для фігур (площа або периметр):</p>
+
+    <button id="areaBtn">Обчислити площу</button>
+    <button id="perimeterBtn">Обчислити периметр</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Класи фігур
+        class Circle {
+            constructor(radius) { this.radius = radius; }
+            accept(visitor) { return visitor.visitCircle(this); }
+        }
+
+        class Rectangle {
+            constructor(width, height) { this.width = width; this.height = height; }
+            accept(visitor) { return visitor.visitRectangle(this); }
+        }
+
+        // Відвідувачі
+        class AreaVisitor {
+            visitCircle(circle) { return `Площа кола: ${(Math.PI * circle.radius ** 2).toFixed(2)}`; }
+            visitRectangle(rect) { return `Площа прямокутника: ${(rect.width * rect.height).toFixed(2)}`; }
+        }
+
+        class PerimeterVisitor {
+            visitCircle(circle) { return `Периметр кола: ${(2 * Math.PI * circle.radius).toFixed(2)}`; }
+            visitRectangle(rect) { return `Периметр прямокутника: ${(2 * (rect.width + rect.height)).toFixed(2)}`; }
+        }
+
+        const result = document.getElementById('result');
+
+        const circle = new Circle(5);
+        const rectangle = new Rectangle(4, 6);
+
+        document.getElementById('areaBtn').addEventListener('click', () => {
+            const visitor = new AreaVisitor();
+            result.textContent = `${circle.accept(visitor)}; ${rectangle.accept(visitor)}`;
+        });
+
+        document.getElementById('perimeterBtn').addEventListener('click', () => {
+            const visitor = new PerimeterVisitor();
+            result.textContent = `${circle.accept(visitor)}; ${rectangle.accept(visitor)}`;
+        });
+    </script>
+</body>
+</html>
