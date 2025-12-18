@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Принцип інверсії залежностей (DIP)</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 8px 15px; margin: 10px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 15px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Принцип інверсії залежностей (DIP)</h1>
+    <p>Обирайте базу даних для користувача:</p>
+
+    <button id="mysqlBtn">MySQL</button>
+    <button id="postgresBtn">PostgreSQL</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Абстракція
+        class Database {
+            connect() { throw "Method not implemented"; }
+        }
+
+        // Конкретні реалізації
+        class MySQLDatabase extends Database {
+            connect() { return "Підключено до MySQL"; }
+        }
+
+        class PostgreSQLDatabase extends Database {
+            connect() { return "Підключено до PostgreSQL"; }
+        }
+
+        // Високорівневий модуль
+        class UserService {
+            constructor(database) {
+                this.database = database; // Залежність від абстракції
+            }
+            getUser() { return this.database.connect() + " і отримано користувача"; }
+        }
+
+        const result = document.getElementById('result');
+
+        document.getElementById('mysqlBtn').addEventListener('click', () => {
+            const userService = new UserService(new MySQLDatabase());
+            result.textContent = userService.getUser();
+        });
+
+        document.getElementById('postgresBtn').addEventListener('click', () => {
+            const userService = new UserService(new PostgreSQLDatabase());
+            result.textContent = userService.getUser();
+        });
+    </script>
+</body>
+</html>
