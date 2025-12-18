@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Будівельник — приклад</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f6f6f6;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      background: #fff;
+      border: 1px solid #ccc;
+      white-space: pre-line;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Патерн «Будівельник» (Builder)</h1>
+<p>Поетапне створення складного об’єкта</p>
+
+<button onclick="buildOfficePC()">Зібрати офісний ПК</button>
+<button onclick="buildGamingPC()">Зібрати ігровий ПК</button>
+
+<div id="output" class="result"></div>
+
+<script>
+  // Продукт
+  class Computer {
+    constructor(cpu, ram, storage) {
+      this.cpu = cpu;
+      this.ram = ram;
+      this.storage = storage;
+    }
+  }
+
+  // Будівельник
+  class ComputerBuilder {
+    setCPU(cpu) {
+      this.cpu = cpu;
+      return this;
+    }
+
+    setRAM(ram) {
+      this.ram = ram;
+      return this;
+    }
+
+    setStorage(storage) {
+      this.storage = storage;
+      return this;
+    }
+
+    build() {
+      return new Computer(this.cpu, this.ram, this.storage);
+    }
+  }
+
+  // Використання будівельника
+  function buildOfficePC() {
+    const pc = new ComputerBuilder()
+      .setCPU("Intel i5")
+      .setRAM("16 GB")
+      .setStorage("512 GB SSD")
+      .build();
+
+    show(pc);
+  }
+
+  function buildGamingPC() {
+    const pc = new ComputerBuilder()
+      .setCPU("AMD Ryzen 9")
+      .setRAM("32 GB")
+      .setStorage("1 TB SSD")
+      .build();
+
+    show(pc);
+  }
+
+  function show(pc) {
+    document.getElementById("output").innerText =
+      "Компʼютер зібрано:\n" +
+      "CPU: " + pc.cpu + "\n" +
+      "RAM: " + pc.ram + "\n" +
+      "Storage: " + pc.storage;
+  }
+</script>
+
+</body>
+</html>
