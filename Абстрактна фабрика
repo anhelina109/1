@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Абстрактна фабрика — приклад</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      background: #f0f0f0;
+    }
+    .container {
+      margin-top: 20px;
+      padding: 20px;
+      border: 1px solid #ccc;
+      background: white;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Патерн «Абстрактна фабрика»</h1>
+<p>Приклад створення UI-елементів у різних темах</p>
+
+<button onclick="renderUI('light')">Light Theme</button>
+<button onclick="renderUI('dark')">Dark Theme</button>
+
+<div id="ui" class="container"></div>
+
+<script>
+  // Абстрактні продукти
+  class Button {
+    render() {}
+  }
+
+  class Input {
+    render() {}
+  }
+
+  // Конкретні продукти (Light)
+  class LightButton extends Button {
+    render() {
+      return '<button style="background:#fff;color:#000;border:1px solid #000">Light Button</button>';
+    }
+  }
+
+  class LightInput extends Input {
+    render() {
+      return '<input placeholder="Light Input" style="padding:6px;border:1px solid #000">';
+    }
+  }
+
+  // Конкретні продукти (Dark)
+  class DarkButton extends Button {
+    render() {
+      return '<button style="background:#333;color:#fff;border:1px solid #fff">Dark Button</button>';
+    }
+  }
+
+  class DarkInput extends Input {
+    render() {
+      return '<input placeholder="Dark Input" style="padding:6px;background:#333;color:#fff;border:1px solid #fff">';
+    }
+  }
+
+  // Абстрактна фабрика
+  class ThemeFactory {
+    createButton() {}
+    createInput() {}
+  }
+
+  // Конкретні фабрики
+  class LightThemeFactory extends ThemeFactory {
+    createButton() {
+      return new LightButton();
+    }
+    createInput() {
+      return new LightInput();
+    }
+  }
+
+  class DarkThemeFactory extends ThemeFactory {
+    createButton() {
+      return new DarkButton();
+    }
+    createInput() {
+      return new DarkInput();
+    }
+  }
+
+  // Використання абстрактної фабрики
+  function renderUI(theme) {
+    let factory;
+    if (theme === 'light') {
+      factory = new LightThemeFactory();
+    } else {
+      factory = new DarkThemeFactory();
+    }
+
+    const button = factory.createButton();
+    const input = factory.createInput();
+
+    document.getElementById('ui').innerHTML =
+      button.render() + "<br><br>" + input.render();
+  }
+</script>
+
+</body>
+</html>
