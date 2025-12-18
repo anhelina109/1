@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Міст</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; background-color: #f0f0f0; }
+        select, button { padding: 5px; margin: 5px; font-size: 14px; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Міст</h1>
+    <p>Виберіть абстракцію та реалізацію, щоб побачити результат їх взаємодії.</p>
+    
+    <label>Абстракція: </label>
+    <select id="abstractionSelect">
+        <option value="Розширена">Розширена</option>
+        <option value="Базова">Базова</option>
+    </select>
+
+    <label>Реалізація: </label>
+    <select id="implementationSelect">
+        <option value="Конкретна A">Конкретна A</option>
+        <option value="Конкретна B">Конкретна B</option>
+    </select>
+
+    <button id="showBtn">Показати результат</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <pre id="result"></pre>
+    </div>
+
+    <script>
+        const abstractionSelect = document.getElementById('abstractionSelect');
+        const implementationSelect = document.getElementById('implementationSelect');
+        const showBtn = document.getElementById('showBtn');
+        const result = document.getElementById('result');
+
+        class Implementation {
+            constructor(name) { this.name = name; }
+            operation() { return `Виконується ${this.name}`; }
+        }
+
+        class Abstraction {
+            constructor(implementation, type) {
+                this.implementation = implementation;
+                this.type = type;
+            }
+            operation() {
+                return `${this.type} абстракція використовує: ${this.implementation.operation()}`;
+            }
+        }
+
+        showBtn.addEventListener('click', () => {
+            const impl = new Implementation(implementationSelect.value);
+            const abs = new Abstraction(impl, abstractionSelect.value);
+            result.textContent = abs.operation();
+        });
+    </script>
+</body>
+</html>
