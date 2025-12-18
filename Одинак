@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Одинак</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f5f5f5; }
+        canvas { border: 2px solid #333; cursor: crosshair; background-color: #fff; }
+        #pointsList { margin-top: 20px; text-align: left; display: inline-block; }
+        h1 { color: #2c3e50; }
+        button { margin-top: 10px; padding: 5px 10px; font-size: 14px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Одинак</h1>
+    <p>Клікни на площину, щоб додати точку. Координати точок відображаються нижче.</p>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <div id="pointsList">
+        <h3>Список точок:</h3>
+        <ul id="list"></ul>
+    </div>
+    <button id="clearBtn">Очистити всі точки</button>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const list = document.getElementById('list');
+        const clearBtn = document.getElementById('clearBtn');
+        let points = [];
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            points.push({x, y});
+            drawPoint(x, y);
+            updateList();
+        });
+
+        clearBtn.addEventListener('click', () => {
+            points = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            updateList();
+        });
+
+        function drawPoint(x, y) {
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function updateList() {
+            list.innerHTML = '';
+            points.forEach((p, i) => {
+                const li = document.createElement('li');
+                li.textContent = `Точка ${i+1}: (${Math.round(p.x)}, ${Math.round(p.y)})`;
+                list.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
