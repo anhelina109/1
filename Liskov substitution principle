@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Принцип підстановки Лісков (LSP)</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 8px 15px; margin: 10px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 15px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Принцип підстановки Лісков (LSP)</h1>
+    <p>Обирайте птаха і дивіться, як він рухається:</p>
+
+    <button id="sparrowBtn">Ластівка</button>
+    <button id="penguinBtn">Пінгвін</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Базовий клас
+        class Bird {
+            move() { return "Я рухаюсь"; }
+        }
+
+        // Підкласи
+        class FlyingBird extends Bird {
+            move() { return "Я літаю"; }
+        }
+
+        class Penguin extends Bird {
+            move() { return "Я плаваю"; }
+        }
+
+        const result = document.getElementById('result');
+        const sparrow = new FlyingBird();
+        const penguin = new Penguin();
+
+        document.getElementById('sparrowBtn').addEventListener('click', () => {
+            result.textContent = `Ластівка: ${sparrow.move()}`;
+        });
+
+        document.getElementById('penguinBtn').addEventListener('click', () => {
+            result.textContent = `Пінгвін: ${penguin.move()}`;
+        });
+    </script>
+</body>
+</html>
