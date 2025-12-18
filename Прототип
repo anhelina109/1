@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Інтерактивні точки</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; }
+        canvas { border: 1px solid #333; cursor: crosshair; }
+        #pointsList { margin-top: 20px; text-align: left; display: inline-block; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Інтерактивні точки</h1>
+    <p>Клікни на площину, щоб додати точку. Координати відображаються нижче.</p>
+    <canvas id="canvas" width="600" height="400"></canvas>
+    <div id="pointsList">
+        <h3>Список точок:</h3>
+        <ul id="list"></ul>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const list = document.getElementById('list');
+        let points = [];
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            points.push({x, y});
+            drawPoint(x, y);
+            updateList();
+        });
+
+        function drawPoint(x, y) {
+            ctx.fillStyle = 'red';
+            ctx.beginPath();
+            ctx.arc(x, y, 5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        function updateList() {
+            list.innerHTML = '';
+            points.forEach((p, i) => {
+                const li = document.createElement('li');
+                li.textContent = `Точка ${i+1}: (${Math.round(p.x)}, ${Math.round(p.y)})`;
+                list.appendChild(li);
+            });
+        }
+    </script>
+</body>
+</html>
