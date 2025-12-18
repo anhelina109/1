@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <title>Microservices + API Gateway Demo</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    section { margin-bottom: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 8px; }
+    h2 { margin-top: 0; }
+    input, button { margin: 5px 0; padding: 5px; width: 100%; max-width: 300px; }
+    pre { background: #f5f5f5; padding: 10px; border-radius: 5px; max-height: 200px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+
+<h1>Microservices + API Gateway Demo</h1>
+
+<section>
+  <h2>Catalog Service</h2>
+  <button onclick="getCatalog()">Get Items</button>
+</section>
+
+<section>
+  <h2>Users Service</h2>
+  <input type="number" id="userId" placeholder="User ID">
+  <button onclick="getUser()">Get User</button>
+</section>
+
+<section>
+  <h2>Orders Service</h2>
+  <input type="number" id="orderUserId" placeholder="User ID">
+  <input type="number" id="itemId" placeholder="Item ID">
+  <input type="number" id="qty" placeholder="Quantity">
+  <button onclick="createOrder()">Create Order</button>
+</section>
+
+<section>
+  <h2>Result</h2>
+  <pre id="result">Результат буде тут...</pre>
+</section>
+
+<script>
+  const apiBase = 'http://localhost:8080'; // Gateway address
+
+  async function getCatalog() {
+    const res = await fetch(`${apiBase}/catalog/items`);
+    const data = await res.json();
+    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+  }
+
+  async function getUser() {
+    const userId = document.getElementById('userId').value;
+    if (!userId) return alert('Введіть User ID');
+    const res = await fetch(`${apiBase}/users/${userId}`);
+    const data = await res.json();
+    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+  }
+
+  async function createOrder() {
+    const userId = document.getElementById('orderUserId').value;
+    const itemId = document.getElementById('itemId').value;
+    const qty = document.getElementById('qty').value;
+    if (!userId || !itemId || !qty) return alert('Заповніть всі поля');
+
+    const res = await fetch(`${apiBase}/orders`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: Number(userId), itemId: Number(itemId), qty: Number(qty) })
+    });
+    const data = await res.json();
+    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+  }
+</script>
+
+</body>
+</html>
