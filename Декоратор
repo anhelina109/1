@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Декоратор</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; background-color: #f0f0f0; }
+        select, button { padding: 5px; margin: 5px; font-size: 14px; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Декоратор</h1>
+    <p>Виберіть базовий елемент і декоратор, щоб побачити результат.</p>
+
+    <label>Базовий елемент: </label>
+    <select id="baseSelect">
+        <option value="Текст">Текст</option>
+        <option value="Картинка">Картинка</option>
+    </select>
+
+    <label>Декоратор: </label>
+    <select id="decoratorSelect">
+        <option value="Жирний">Жирний</option>
+        <option value="Курсив">Курсив</option>
+        <option value="Підкреслений">Підкреслений</option>
+    </select>
+
+    <button id="applyBtn">Застосувати</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        class BaseElement {
+            constructor(type) { this.type = type; }
+            render() { return this.type; }
+        }
+
+        class Decorator {
+            constructor(component, style) {
+                this.component = component;
+                this.style = style;
+            }
+            render() {
+                let content = this.component.render();
+                switch(this.style) {
+                    case 'Жирний': return `<b>${content}</b>`;
+                    case 'Курсив': return `<i>${content}</i>`;
+                    case 'Підкреслений': return `<u>${content}</u>`;
+                    default: return content;
+                }
+            }
+        }
+
+        const baseSelect = document.getElementById('baseSelect');
+        const decoratorSelect = document.getElementById('decoratorSelect');
+        const applyBtn = document.getElementById('applyBtn');
+        const result = document.getElementById('result');
+
+        applyBtn.addEventListener('click', () => {
+            const base = new BaseElement(baseSelect.value);
+            const decorated = new Decorator(base, decoratorSelect.value);
+            result.innerHTML = decorated.render();
+        });
+    </script>
+</body>
+</html>
