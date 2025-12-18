@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MVC приклад: Список завдань</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        input { padding: 5px; font-size: 14px; }
+        button { padding: 5px 10px; font-size: 14px; cursor: pointer; margin-left: 5px; }
+        ul { text-align: left; display: inline-block; margin-top: 20px; }
+        li { margin: 5px 0; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>MVC приклад: Список завдань</h1>
+    <input type="text" id="taskInput" placeholder="Введіть завдання">
+    <button id="addBtn">Додати</button>
+
+    <ul id="taskList"></ul>
+
+    <script>
+        // ==================== Model ====================
+        class TaskModel {
+            constructor() {
+                this.tasks = [];
+            }
+
+            addTask(task) {
+                this.tasks.push(task);
+            }
+
+            getTasks() {
+                return this.tasks;
+            }
+        }
+
+        // ==================== View =====================
+        class TaskView {
+            constructor() {
+                this.taskListElement = document.getElementById('taskList');
+            }
+
+            render(tasks) {
+                this.taskListElement.innerHTML = '';
+                tasks.forEach((task, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = `${index + 1}. ${task}`;
+                    this.taskListElement.appendChild(li);
+                });
+            }
+        }
+
+        // ================== Controller =================
+        class TaskController {
+            constructor(model, view) {
+                this.model = model;
+                this.view = view;
+
+                // Прив'язка події кнопки
+                document.getElementById('addBtn').addEventListener('click', () => {
+                    this.addTask();
+                });
+            }
+
+            addTask() {
+                const input = document.getElementById('taskInput');
+                const task = input.value.trim();
+                if (task) {
+                    this.model.addTask(task);
+                    this.view.render(this.model.getTasks());
+                    input.value = '';
+                }
+            }
+        }
+
+        // ================== Ініціалізація =================
+        const model = new TaskModel();
+        const view = new TaskView();
+        const controller = new TaskController(model, view);
+
+    </script>
+</body>
+</html>
