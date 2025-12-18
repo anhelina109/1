@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Легковаговик</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        canvas { border: 1px solid #333; background-color: #fff; cursor: crosshair; }
+        h1 { color: #2c3e50; }
+        button { padding: 5px 10px; margin: 10px; font-size: 14px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Легковаговик (Flyweight)</h1>
+    <p>Натисніть кнопку, щоб створити 500 точок із повторним використанням спільних властивостей.</p>
+    <button id="generateBtn">Створити точки</button>
+    <canvas id="canvas" width="600" height="400"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        const generateBtn = document.getElementById('generateBtn');
+
+        // Легковаговик: спільні властивості точки
+        class PointFlyweight {
+            constructor(color, radius) {
+                this.color = color;
+                this.radius = radius;
+            }
+            draw(ctx, x, y) {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(x, y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Фабрика легковаговиків
+        class FlyweightFactory {
+            constructor() {
+                this.flyweights = {};
+            }
+            getFlyweight(color, radius) {
+                const key = `${color}_${radius}`;
+                if (!this.flyweights[key]) {
+                    this.flyweights[key] = new PointFlyweight(color, radius);
+                }
+                return this.flyweights[key];
+            }
+        }
+
+        const factory = new FlyweightFactory();
+
+        generateBtn.addEventListener('click', () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < 500; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const flyweight = factory.getFlyweight('red', 5); // усі точки одного кольору та радіусу
+                flyweight.draw(ctx, x, y);
+            }
+        });
+    </script>
+</body>
+</html>
