@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Стан</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 5px 10px; margin: 5px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: center; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Стан (State)</h1>
+    <p>Натискайте кнопку, щоб змінювати стан об’єкта.</p>
+
+    <button id="changeStateBtn">Змінити стан</button>
+
+    <div id="output">
+        <h3>Поточний стан:</h3>
+        <div id="currentState"></div>
+    </div>
+
+    <script>
+        // Стан
+        class State {
+            handle(context) {}
+        }
+
+        class StateA extends State {
+            handle(context) {
+                context.setState(new StateB());
+                return "Стан A: виконана дія, перехід у Стан B";
+            }
+        }
+
+        class StateB extends State {
+            handle(context) {
+                context.setState(new StateC());
+                return "Стан B: виконана дія, перехід у Стан C";
+            }
+        }
+
+        class StateC extends State {
+            handle(context) {
+                context.setState(new StateA());
+                return "Стан C: виконана дія, перехід у Стан A";
+            }
+        }
+
+        // Контекст
+        class Context {
+            constructor(state) {
+                this.state = state;
+            }
+            setState(state) {
+                this.state = state;
+            }
+            request() {
+                return this.state.handle(this);
+            }
+        }
+
+        const context = new Context(new StateA());
+        const btn = document.getElementById('changeStateBtn');
+        const currentState = document.getElementById('currentState');
+
+        btn.addEventListener('click', () => {
+            currentState.textContent = context.request();
+        });
+
+        currentState.textContent = "Стан A: готовий до дії";
+    </script>
+</body>
+</html>
