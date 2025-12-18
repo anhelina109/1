@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Знімок</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        input, button { padding: 5px 10px; margin: 5px; font-size: 14px; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+        textarea { width: 300px; height: 80px; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Знімок (Memento)</h1>
+    <p>Вводьте текст, зберігайте стан та відновлюйте попередні версії.</p>
+
+    <textarea id="textInput" placeholder="Введіть текст тут..."></textarea><br>
+    <button id="saveBtn">Зберегти стан</button>
+    <button id="undoBtn">Відновити попередній стан</button>
+
+    <div id="output">
+        <h3>Поточний стан:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Знімок
+        class Memento {
+            constructor(state) { this.state = state; }
+            getState() { return this.state; }
+        }
+
+        // Об’єкт, стан якого зберігається
+        class Originator {
+            constructor() { this.state = ""; }
+            setState(state) { this.state = state; }
+            createMemento() { return new Memento(this.state); }
+            restore(memento) { this.state = memento.getState(); }
+            getState() { return this.state; }
+        }
+
+        // Сховище для знімків
+        class Caretaker {
+            constructor() { this.mementos = []; }
+            addMemento(memento) { this.mementos.push(memento); }
+            getLastMemento() { return this.mementos.pop(); }
+        }
+
+        const originator = new Originator();
+        const caretaker = new Caretaker();
+
+        const textInput = document.getElementById('textInput');
+        const saveBtn = document.getElementById('saveBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const result = document.getElementById('result');
+
+        function updateDisplay() {
+            result.textContent = originator.getState();
+        }
+
+        saveBtn.addEventListener('click', () => {
+            originator.setState(textInput.value);
+            caretaker.addMemento(originator.createMemento());
+            updateDisplay();
+        });
+
+        undoBtn.addEventListener('click', () => {
+            const memento = caretaker.getLastMemento();
+            if (memento) {
+                originator.restore(memento);
+                textInput.value = originator.getState();
+                updateDisplay();
+            } else {
+                result.textContent = "Немає попередніх станів";
+            }
+        });
+
+        updateDisplay();
+    </script>
+</body>
+</html>
