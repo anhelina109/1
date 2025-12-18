@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Шаблонний метод</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 5px 10px; margin: 5px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Шаблонний метод (Template Method)</h1>
+    <p>Виберіть алгоритм для запуску шаблонного методу:</p>
+
+    <button id="algorithm1Btn">Алгоритм 1</button>
+    <button id="algorithm2Btn">Алгоритм 2</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Базовий клас з шаблонним методом
+        class Template {
+            execute() {
+                let output = [];
+                output.push(this.step1());
+                output.push(this.step2());
+                output.push(this.step3());
+                return output.join(" → ");
+            }
+            step1() { return "Крок 1 базовий"; }
+            step2() { throw new Error("Підклас має реалізувати step2"); }
+            step3() { return "Крок 3 базовий"; }
+        }
+
+        // Підклас 1
+        class ConcreteTemplate1 extends Template {
+            step2() { return "Крок 2 реалізація для Алгоритму 1"; }
+        }
+
+        // Підклас 2
+        class ConcreteTemplate2 extends Template {
+            step2() { return "Крок 2 реалізація для Алгоритму 2"; }
+        }
+
+        const result = document.getElementById('result');
+
+        document.getElementById('algorithm1Btn').addEventListener('click', () => {
+            const algo = new ConcreteTemplate1();
+            result.textContent = algo.execute();
+        });
+
+        document.getElementById('algorithm2Btn').addEventListener('click', () => {
+            const algo = new ConcreteTemplate2();
+            result.textContent = algo.execute();
+        });
+    </script>
+</body>
+</html>
