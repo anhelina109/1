@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event-Driven Test UI</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 20px; }
+  input, button { margin: 5px 0; padding: 5px; width: 200px; }
+  pre { background: #f4f4f4; padding: 10px; border-radius: 5px; max-height: 300px; overflow: auto; }
+</style>
+</head>
+<body>
+<h1>Event-Driven Kafka Test UI</h1>
+
+<label>User ID: <input type="number" id="userId" value="1"></label><br>
+<label>Item ID: <input type="number" id="itemId" value="2"></label><br>
+<label>Quantity: <input type="number" id="qty" value="1"></label><br>
+<button id="createOrder">Create Order</button>
+
+<h2>Event Log</h2>
+<pre id="log"></pre>
+
+<script>
+const logEl = document.getElementById('log');
+
+function log(message) {
+    const ts = new Date().toISOString();
+    logEl.textContent += `[${ts}] ${message}\n`;
+    logEl.scrollTop = logEl.scrollHeight;
+}
+
+document.getElementById('createOrder').addEventListener('click', async () => {
+    const userId = document.getElementById('userId').value;
+    const itemId = document.getElementById('itemId').value;
+    const qty = document.getElementById('qty').value;
+
+    const orderData = { userId: Number(userId), itemId: Number(itemId), qty: Number(qty) };
+
+    log(`Sending OrderCreated: ${JSON.stringify(orderData)}`);
+
+    try {
+        const res = await fetch('http://localhost:5002/orders', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(orderData)
+        });
+
+        if (!res.ok) {
+            const text = await res.text();
+            log(`Error: ${res.status} ${text}`);
+            return;
+        }
+
+        const data = await res.json();
+        log(`Order Created: ${JSON.stringify(data)}`);
+
+    } catch (err) {
+        log(`Fetch error: ${err.message}`);
+    }
+});
+</script>
+</body>
+</html>
