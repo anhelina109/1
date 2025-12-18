@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Ітератор</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 5px 10px; margin: 5px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Ітератор (Iterator)</h1>
+    <p>Переглядайте елементи колекції по черзі за допомогою кнопок.</p>
+
+    <button id="prevBtn">Попередній</button>
+    <button id="nextBtn">Наступний</button>
+
+    <div id="output">
+        <h3>Поточний елемент:</h3>
+        <div id="current"></div>
+    </div>
+
+    <script>
+        class Iterator {
+            constructor(items) {
+                this.items = items;
+                this.index = 0;
+            }
+            current() {
+                return this.items[this.index];
+            }
+            next() {
+                if (this.index < this.items.length - 1) this.index++;
+                return this.current();
+            }
+            prev() {
+                if (this.index > 0) this.index--;
+                return this.current();
+            }
+        }
+
+        const collection = ["Яблуко", "Банан", "Вишня", "Груша", "Апельсин"];
+        const iterator = new Iterator(collection);
+
+        const current = document.getElementById('current');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        function updateDisplay() {
+            current.textContent = iterator.current();
+        }
+
+        prevBtn.addEventListener('click', () => { iterator.prev(); updateDisplay(); });
+        nextBtn.addEventListener('click', () => { iterator.next(); updateDisplay(); });
+
+        updateDisplay();
+    </script>
+</body>
+</html>
