@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Спостерігач</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        input { padding: 5px; margin: 5px; font-size: 14px; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Спостерігач (Observer)</h1>
+    <p>Змініть значення повзунка, щоб спостерігачі отримали оновлення.</p>
+
+    <input type="range" id="slider" min="0" max="100" value="50">
+    <div id="output">
+        <h3>Оновлення спостерігачів:</h3>
+        <ul id="observerList"></ul>
+    </div>
+
+    <script>
+        // Суб’єкт
+        class Subject {
+            constructor() {
+                this.observers = [];
+                this.state = 0;
+            }
+            attach(observer) {
+                this.observers.push(observer);
+            }
+            detach(observer) {
+                this.observers = this.observers.filter(obs => obs !== observer);
+            }
+            notify() {
+                this.observers.forEach(observer => observer.update(this.state));
+            }
+            setState(state) {
+                this.state = state;
+                this.notify();
+            }
+        }
+
+        // Спостерігач
+        class Observer {
+            constructor(name, listElement) {
+                this.name = name;
+                this.listElement = listElement;
+            }
+            update(state) {
+                const li = document.createElement('li');
+                li.textContent = `${this.name} отримав нове значення: ${state}`;
+                this.listElement.appendChild(li);
+            }
+        }
+
+        const subject = new Subject();
+        const observerList = document.getElementById('observerList');
+
+        // Створюємо спостерігачів
+        const observer1 = new Observer("Спостерігач 1", observerList);
+        const observer2 = new Observer("Спостерігач 2", observerList);
+        const observer3 = new Observer("Спостерігач 3", observerList);
+
+        // Підписуємо їх на суб’єкта
+        subject.attach(observer1);
+        subject.attach(observer2);
+        subject.attach(observer3);
+
+        const slider = document.getElementById('slider');
+        slider.addEventListener('input', () => {
+            subject.setState(slider.value);
+        });
+    </script>
+</body>
+</html>
