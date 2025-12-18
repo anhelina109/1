@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Замісник</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        input, button { padding: 5px 10px; margin: 5px; font-size: 14px; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Замісник (Proxy)</h1>
+    <p>Введіть пароль для доступу до об’єкта та натисніть "Виконати дію".</p>
+
+    <input type="password" id="passwordInput" placeholder="Пароль">
+    <button id="executeBtn">Виконати дію</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Реальний об'єкт
+        class RealSubject {
+            action() {
+                return "Дія виконана реальним об’єктом";
+            }
+        }
+
+        // Проксі
+        class ProxySubject {
+            constructor(realSubject, password) {
+                this.realSubject = realSubject;
+                this.password = password;
+            }
+            action(inputPassword) {
+                if (inputPassword === this.password) {
+                    return this.realSubject.action();
+                } else {
+                    return "Доступ заборонено: неправильний пароль";
+                }
+            }
+        }
+
+        const executeBtn = document.getElementById('executeBtn');
+        const passwordInput = document.getElementById('passwordInput');
+        const result = document.getElementById('result');
+
+        // Створюємо реальний об'єкт і проксі з паролем "1234"
+        const realObj = new RealSubject();
+        const proxy = new ProxySubject(realObj, "1234");
+
+        executeBtn.addEventListener('click', () => {
+            const inputPassword = passwordInput.value;
+            result.textContent = proxy.action(inputPassword);
+        });
+    </script>
+</body>
+</html>
