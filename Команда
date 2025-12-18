@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Прототип: Команда</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 20px; background-color: #f0f0f0; }
+        button { padding: 5px 10px; margin: 5px; font-size: 14px; cursor: pointer; }
+        #output { margin-top: 20px; padding: 10px; border: 1px solid #333; background-color: #fff; display: inline-block; min-width: 300px; text-align: left; }
+        h1 { color: #2c3e50; }
+    </style>
+</head>
+<body>
+    <h1>Прототип: Команда (Command)</h1>
+    <p>Натисніть кнопку, щоб виконати різні команди.</p>
+
+    <button id="addTextBtn">Додати текст</button>
+    <button id="addNumberBtn">Додати число</button>
+    <button id="undoBtn">Скасувати останню команду</button>
+
+    <div id="output">
+        <h3>Результат:</h3>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        // Рецепієнт
+        class Receiver {
+            constructor() { this.content = ""; }
+            addText(text) { this.content += text + " "; }
+            addNumber(number) { this.content += number + " "; }
+            getContent() { return this.content; }
+        }
+
+        // Команда
+        class Command {
+            execute() {}
+            undo() {}
+        }
+
+        class AddTextCommand extends Command {
+            constructor(receiver, text) {
+                super();
+                this.receiver = receiver;
+                this.text = text;
+            }
+            execute() { this.receiver.addText(this.text); }
+            undo() { this.receiver.content = this.receiver.content.replace(this.text + " ", ""); }
+        }
+
+        class AddNumberCommand extends Command {
+            constructor(receiver, number) {
+                super();
+                this.receiver = receiver;
+                this.number = number;
+            }
+            execute() { this.receiver.addNumber(this.number); }
+            undo() { this.receiver.content = this.receiver.content.replace(this.number + " ", ""); }
+        }
+
+        const receiver = new Receiver();
+        const history = [];
+        const result = document.getElementById('result');
+
+        document.getElementById('addTextBtn').addEventListener('click', () => {
+            const command = new AddTextCommand(receiver, "Привіт");
+            command.execute();
+            history.push(command);
+            result.textContent = receiver.getContent();
+        });
+
+        document.getElementById('addNumberBtn').addEventListener('click', () => {
+            const command = new AddNumberCommand(receiver, 42);
+            command.execute();
+            history.push(command);
+            result.textContent = receiver.getContent();
+        });
+
+        document.getElementById('undoBtn').addEventListener('click', () => {
+            const command = history.pop();
+            if (command) {
+                command.undo();
+                result.textContent = receiver.getContent();
+            }
+        });
+    </script>
+</body>
+</html>
