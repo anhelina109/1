@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hexagonal Architecture Demo</title>
+<style>
+body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:20px; }
+h1 { text-align:center; color:#333; }
+.container { display:flex; gap:20px; margin-top:20px; }
+.left, .right { flex:1; background:#fff; padding:20px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); }
+button { padding:8px 15px; margin-top:5px; cursor:pointer; background:#2c7be5; color:#fff; border:none; border-radius:4px; }
+button:hover { background:#1a5bb8; }
+input { width: calc(100% - 20px); padding:8px; margin-top:5px; border-radius:4px; border:1px solid #ccc; }
+pre { background:#222; color:#0f0; padding:10px; border-radius:4px; overflow-x:auto; max-height:300px; }
+h3 { margin-top:0; }
+</style>
+</head>
+<body>
+
+<h1>Hexagonal Architecture — демонстрація</h1>
+<div class="container">
+<div class="left">
+<h3>API</h3>
+<input type="text" id="skuInput" placeholder="SKU">
+<input type="number" id="qtyInput" placeholder="Qty">
+<button id="createBtn">POST /orders</button>
+<input type="text" id="idInput" placeholder="Order ID">
+<button id="getBtn">GET /orders/:id</button>
+<pre id="result">{}</pre>
+</div>
+
+<div class="right">
+<h3>Core / Ports</h3>
+<pre>
+Order
+OrderRepository
+CreateOrder
+GetOrder
+</pre>
+<h3>Adapters</h3>
+<pre>
+HTTP Adapter
+DB Adapter (array)
+CSV Adapter (localStorage)
+</pre>
+<h3>DI</h3>
+<pre>
+REPO_ADAPTER = 'db' or 'file'
+</pre>
+</div>
+</div>
+
+<script>
+// ================= Core / Domain =================
+class Order {
+    constructor(id, sku, qty) {
+        if(!sku || !sku.trim()) throw new Error("SKU must not be empty");
+        if(qty <= 0) throw new Error("Qty must be positive");
+        this.id = id;
+        this.sku = sku;
+        this.qty = qty;
+    }
+}
+
+// Ports
+class OrderRepository {
+    create(order){ throw "Not implemented"; }
+    getById(id){ throw "Not implemented"; }
+}
+
+// UseCases
+class CreateOrder {
+    constructor(repo){ this.repo = repo; }
+    execute(dto){
+        const order = new Order(null, dto.sku, dto.qty);
+        return this.repo.create(order);
+    }
+}
+
+class GetOrder {
+    constructor(repo){ this.repo = repo; }
+    execute(id){ return this.repo.getById(id); }
+}
+
+// ================= Infrastructure / Adapters =================
+// DB Adapter (in-memory array)
+class DBOrderRepository extends OrderRepository {
+    constructor(){ super(); this.orders=[]; this.nextId=1; }
+    create(order){ order.id=this.nextId++; this.orders.push(order); return order; }
+    getById(id){ return this.orders.find(o=>o.id==id)||null; }
+}
+
+// CSV Adapter (localStorage)
+class CSVOrderRepository extends OrderRepository {
+    constructor(){ super(); this.key="orders"; this._load(); }
+    _load(){
+        const data = localStorage.getItem(this.key);
+        this.orders = data ? JSON.parse(data) : [];
+        this.nextId = this.orders.length ? Math.max(...this.orders.map(o=>o.id))+1 : 1;
+    }
+    _save(){ localStorage.setItem(this.key, JSON.stringify(this.orders)); }
+    create(order){ order.id=this.nextId++; this.orders.push(order); this._save(); return order; }
+    getById(id){ this._load(); return this.orders.find(o=>o.id==id)||null; }
+    clear(){ localStorage.removeItem(this.key); this._load(); }
+}
+
+// ================= DI / Factory =================
+const REPO_ADAPTER = 'db'; // змінити на 'file' для CSV
+let repo;
+if(REPO_ADAPTER==='db'){ repo = new DBOrderRepository(); }
+else { repo = new CSVOrderRepository(); }
+
+const createUC = new CreateOrder(repo);
+const getUC = new GetOrder(repo);
+
+// ================= HTTP / Presentation =================
+const resultEl = document.getElementById("result");
+
+document.getElementById("createBtn").addEventListener("click", ()=>{
+    const sku = document.getElementById("skuInput").value;
+    const qty = parseInt(document.getElementById("qtyInput").value);
+    try{
+        const order = createUC.execute({sku, qty});
+        resultEl.textContent = JSON.stringify({status:201, body: order}, null,2);
+    } catch(e){
+        resultEl.textContent = "Error: "+e.message;
+    }
+});
+
+document.getElementById("getBtn").addEventListener("click", ()=>{
+    const id = parseInt(document.getElementById("idInput").value);
+    const order = getUC.execute(id);
+    if(order) resultEl.textContent = JSON.stringify({status:200, body: order}, null,2);
+    else resultEl.textContent = JSON.stringify({status:404, body:null}, null,2);
+});
+</script>
+
+</body>
+</html>
